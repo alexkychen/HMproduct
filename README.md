@@ -1,8 +1,11 @@
 # HMproduct
-H&amp;M personalized fashion recommendations -
-Provide product recommendations based on previous purchase
+### H&amp;M personalized fashion recommendations
 
-Kaggle project link: https://www.kaggle.com/c/h-and-m-personalized-fashion-recommendations  
+<strong>Project goal:</strong> Provide product recommendations based on previous purchase
+
+<strong>Kaggle project link:</strong> https://www.kaggle.com/c/h-and-m-personalized-fashion-recommendations  
+
+
 
 Prediction outcome format:(customer_id, 12 predictions )
 
