@@ -1,9 +1,9 @@
 venv/
+.ipynb_checkpoints/*
+*/.ipynb_checkpoints/*
+.DS_Store
 data/articles.csv
 data/customers.csv
 data/sample_submission.csv
 data/transactions_train.csv
 data/.DS_Store
-.DS_Store
-
-
