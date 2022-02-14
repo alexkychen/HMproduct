@@ -15,7 +15,7 @@
 - How should we split data into training and validation sets?
 
 ### Outcome evaluation
-- Fixed model: Only recommend top selling products to every customer
+- Top-selling model: Only recommend top selling products to every customer
 - Random model: Randomly recommend 12 products to each customer
 - Compare outcomes between our model and Fixed or Random model
 
