@@ -42,8 +42,9 @@
     * Recommend products purchased by other customers but not yet purchased by target customer
 
   - item-item collaborative filtering (e.g., Amazon)
-    * create binary vector
-2. Content-based filtering
+    * Transpose the above matrix and run similar procedure
+2. Content-based filtering (based on the features of items themselves)
+
 3. Hybrid recommendations
 
 
@@ -57,3 +58,5 @@ References
 - [Build a Recommendation Engine With Collaborative Filtering](https://realpython.com/build-recommendation-engine-collaborative-filtering/)
 - [Various Implementations of Collaborative Filtering](https://towardsdatascience.com/various-implementations-of-collaborative-filtering-100385c6dfe0)
 - [Recommender Systems in Python 101](https://www.kaggle.com/gspmoreira/recommender-systems-in-python-101)
+- [Item-based collaborative filtering in Python](https://towardsdatascience.com/item-based-collaborative-filtering-in-python-91f747200fab)
+-
