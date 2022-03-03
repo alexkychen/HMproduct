@@ -69,6 +69,10 @@ def all_user_collaborative_filter(X, similar_user_number = 1, max_recommend_item
 
         #add target user_id and recommended items to dict
         recommended_dict[user_id] = recommended_items
+        
+        #print message if recommended_items less than max_recommend_items
+        if max_recommend_items != None and len(recommended_items) < max_recommend_items:
+            print(user_id,"has items less than",max_recommend_items)
 
     return recommended_dict
 
@@ -132,10 +136,10 @@ def user_collaborative_filter(X, target_user, similar_user_number = 1,
     return recommended_items
 
 def average_precision(x):
-    '''
+    """
     Calculate average precision for each user
     x: a binary vector
-    '''
+    """
     x = np.array(x)
 
     #number of items
@@ -156,7 +160,6 @@ def MAP(X, y):
     Calculate Mean Average Precision for the recommendation
     X: A dictionary containing user id as key and recommended items as values
     y: two column data frame of validation data (1st column is user id; 2nd is item id)
-
     '''
     number_users = 0
 
@@ -198,4 +201,49 @@ def MAP(X, y):
     print("Number of users:", number_users)
     return sum(AP_res)/len(AP_res)
 
+def AOP(X, y):
+    """
+    Calculate Average of Precision: 
+    number of recommended items actually purchased / number of recommended items
+    X: A dictionary containing user id as key and recommended items as values
+    y: two column data frame of validation data (1st column is user id; 2nd is item id)
+    """
+    number_users = 0
+
+    unique_user_in_test = y.iloc[:,0].unique()
+
+    #store average precision for each target user
+    AP_res = []
+    
+    #for each target user
+    for user, recommend_items in tqdm(X.items()):
+        
+        #when found in test data
+        if user in unique_user_in_test:
+            number_users += 1
+            
+            #get actual purchased items from y
+            subset = y.loc[y.iloc[:,0] == user]
+            purchased_items = set(subset.iloc[:,1])
+
+            #empty array to store binary data
+            purchased_vector = []
+            
+            #for each recommended item
+            for item in recommend_items:
+
+                #when it is actually purchased
+                if item in purchased_items:
+                    purchased_vector.append(1)
+                #if not purchased
+                else:
+                    purchased_vector.append(0)
+            
+            #calculate average of precision
+            AP = sum(purchased_vector) / len(purchased_vector)
+            #append to AP_res
+            AP_res.append(AP)
+    
+    print("Number of users:", number_users)
+    return sum(AP_res)/len(AP_res)
     
