@@ -23,7 +23,7 @@ def all_user_collaborative_filter(X, similar_user_number = 1, max_recommend_item
     X.drop_duplicates(inplace=True)
 
     #convert dataframe to user-by-item matrix and fill nan with 0
-    user_item_df = X.pivot(index=X.columns[0], columns=X.columns[1] )['value'].fillna(0)
+    user_item_df = X.pivot(index=X.columns[0], columns=X.columns[1])['value'].fillna(0).astype('int8')
 
     #convert user_item_df to numpy matrix
     matrix = np.array(user_item_df)
