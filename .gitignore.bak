@@ -8,4 +8,3 @@ data/sample_submission.csv
 data/transactions_train.csv
 data/transactions_train_20190501-0523.csv
 data/.DS_Store
-data/large_data/*
