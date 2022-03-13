@@ -3,6 +3,92 @@ import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from tqdm import tqdm
 
+def all_item_collaborative_filter(X, similar_item_number = 1):
+    """
+    item-based collaborative filtering for each item in X
+    """
+    #add a value=1 column to data
+    X = pd.DataFrame({"user":X.iloc[:,0],
+                    "item":X.iloc[:,1],
+                    "value":[1]*len(X)})
+
+    #drop duplicate rows, if one purchased more than one items
+    X.drop_duplicates(inplace=True)
+
+    #convert dataframe to item-by-user matrix and fill nan with 0
+    item_user_df = X.pivot(index=X.columns[1], columns=X.columns[0])['value'].fillna(0).astype('int8')
+    
+    #create a dataframe for articles with a serial index
+    article_idx_df = pd.DataFrame({'article':item_user_df.index})
+
+    #convert item_user_df to numpy matrix
+    matrix = np.array(item_user_df)
+
+    #print("start cosine")
+    #calculate cosine similarity
+    similarity = cosine_similarity(matrix)
+    #print("cosine end")
+
+    #sort user index by similarity (left-high/right-low) for each row(user)
+    sorted_sim_index = np.fliplr(np.argsort(similarity))
+    
+    #find customers in training and their purchases items
+    Customer_IDs = X.user.unique()
+    
+    #dict to save customer_id and recommended article_ids
+    recommended_dict = {}
+
+    for customer in Customer_IDs:
+        
+        #find items purchased by customer in training
+        purchased = list(X.loc[X.user == customer].item.unique())
+
+        #empty list to store similarity array for each purchased item
+        similarity_items = []
+        
+        #for each article_id, find its 12 most similar items' similarites
+        for each in purchased:
+
+            #article_id's index
+            item_index = np.where(article_idx_df.article == each)[0]
+
+            if item_index.size == 1:
+                item_index = item_index[0]
+                #use article_id's index to get its similarity vectors with others and append to list
+                similarity_items.append(similarity[item_index])
+            
+        #if no similarity item, go to next customer
+        if len(similarity_items) == 0:
+            break
+
+        #convert similarity_items list to np array
+        similarity_items = np.asarray(similarity_items)
+
+        #replace 1. with 0 in the similarity_items (1 is the item itself)
+        similarity_items[similarity_items > 0.999] = 0
+
+        #Get index of 12 highest similarity for each purchased item
+        high_sim_index = np.argpartition(similarity_items, -12)[:,-12:].flatten()
+
+        #Get similarity using above index info
+        high_similarity = np.take(similarity_items, high_sim_index).flatten()
+
+        #make a dataframe
+        item_index_sim_df = pd.DataFrame({"item_idx":high_sim_index, "similarity":high_similarity})
+        #sort by similarity and get the first 12 items
+        item_index_sim_df = item_index_sim_df.sort_values('similarity', ascending=False).reset_index(drop=True)[0:12]
+
+        #retrieve the article_id by index
+        recommend_article_ids = list(article_idx_df.article[list(item_index_sim_df.item_idx)])
+
+        #add user_id and recommended items to dict
+        recommended_dict[customer] = recommend_article_ids
+    
+    #
+    return recommended_dict
+
+    
+
 def all_user_collaborative_filter(X, similar_user_number = 1, max_recommend_items = None):
 
     """
